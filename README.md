@@ -1,4 +1,4 @@
-## 🤖 Modern Persona Chatbot (Chotto Bot)
+## 🤖 Chotto Bot (Modern & Unique Persona Chatbot)
 
 This project is a dynamic, multi-persona chat application showcasing the **Gemini API** for advanced character generation, built using a simple, secure architecture.
 
