@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Persona Chatbot (Ocean Blue Theme)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Lighter, softer background */
+            background-color: #f0f4f8; /* A light, cool gray */
+        }
+        .chat-bubble {
+            max-width: 85%;
+            padding: 12px 18px; /* Slightly larger padding for modern look */
+            border-radius: 1.25rem; /* More generous rounding */
+            margin-bottom: 10px;
+            /* Subtle shadow for depth */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        /* New Primary Color: Very Light Teal Green (User Bubble) */
+        .user-bubble {
+            background-color: #96E0DB; /* The requested color */
+            color: #1f2937; /* Dark text for contrast against the light background */
+            border-bottom-right-radius: 0.5rem; /* Maintain tail, but keep primary rounding large */
+        }
+        .bot-bubble {
+            background-color: #ffffff; /* Pure white for clean contrast */
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 0.5rem;
+        }
+        /* Style for the cat image container (Neko persona) */
+        .cat-image-container {
+            max-width: 85%;
+            margin-bottom: 10px;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .cat-image {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 1.25rem;
+            object-fit: cover;
+        }
+        .loading-dot {
+            animation: bounce 0.6s infinite alternate;
+        }
+        .loading-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .loading-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="app" class="w-full max-w-lg bg-white shadow-2xl rounded-2xl flex flex-col h-[90vh]">
+        
+        <header class="p-5 border-b border-gray-100 bg-white rounded-t-2xl text-center">
+            <h1 class="text-3xl font-bold text-gray-800">Chotto Bot</h1>
+            <p class="text-sm text-gray-500 mb-4">Choose a character and start chatting.</p>
+            <div id="style-selector" class="flex flex-wrap justify-center gap-2">
+                
+                <button 
+                    data-style="Degawa" 
+                    title="出川っぽい。口癖の「やばいよやばいよー」をランダムに放り込んでくるのが特徴。" 
+                    class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-yellow-400 transition transform hover:scale-105 active:scale-95">
+                    出川
+                </button>
+                <button 
+                    data-style="Koume" 
+                    title="某大夫的なチックショーが決めゼリフ。紳士的にってプログラムしたはずなんだけど、若干方向がズレている感が拭えない。"
+                    class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-sky-400 transition transform hover:scale-105 active:scale-95">
+                    小梅
+                </button>
+                <button 
+                    data-style="Zamasu" 
+                    title="スネちゃまのママ的なマダム。優雅に解決にならない解決策を提案してくれる。〇〇〇の絵文字付き⭐️"
+                    class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-400 transition transform hover:scale-105 active:scale-95">
+                    ざます
+                </button>
+                
+                <button 
+                    data-style="Ossan" 
+                    title="おっさん。上がる年齢に反比例して短くなる体感時間に事あるごとに驚く。常に昔話(誇張と嘘含む)に持っていく会話泥棒。コレステロール値高め。"
+                    class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-red-400 transition transform hover:scale-105 active:scale-95">
+                    おっさん
+                </button>
+                
+                <button 
+                    data-style="Chūni" 
+                    title="厨二・中二。見た目も頭も中二真っ只中。激情と刹那と黒歴史でできている。親兄弟は至ってまとも。若さに任せて突っ走るが意外に博識。"
+                    class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-purple-400 transition transform hover:scale-105 active:scale-95">
+                    中二
+                </button>
+
+                <button 
+                    data-style="Buri-chan" 
+                    title="アイドル。キラキラのキュルンキュルンだが、時々めっちゃ毒吐く。自分が世界一可愛いと信じて疑わない。なおブリトニー・スピアーズではない。"
+                    class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-fuchsia-400 transition transform hover:scale-105 active:scale-95">
+                    ブリちゃん
+                </button>
+
+                <button 
+                    data-style="Neko" 
+                    title="ねこ。かわいい姿を365日24時間見せつけてくる。ランダムに10回に1回の割合で返事してくれる。"
+                    class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-amber-400 transition transform hover:scale-105 active:scale-95">
+                    猫
+                </button>
+                
+                <button 
+                    data-style="Wakame" 
+                    title="三陸沖の純日本産ワカメ。MENSA会員。主に海中からのワカメ視点で、鋭く時事関連にも切り込む。"
+                    class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-lime-400 transition transform hover:scale-105 active:scale-95">
+                    ワカメ
+                </button>
+            </div>
+            <p id="selected-style-display" class="mt-3 text-center text-sm font-medium text-gray-600">
+                Selected Style: <span class="font-bold text-gray-500">None</span>
+            </p>
+        </header>
+
+        <main id="chat-transcript" class="flex-grow p-4 overflow-y-auto space-y-3 bg-gray-50">
+            <div class="text-center text-gray-400 italic mt-4 p-4">
+                気分に合わせてお好きなペルソナを選択してみましょう
+            </div>
+        </main>
+
+        <footer class="p-4 border-t border-gray-100 bg-white">
+            <div class="flex space-x-3">
+                <input type="text" id="user-input" placeholder="Ask your question..." class="flex-grow p-3 border border-gray-300 rounded-xl focus:ring-cyan-500 focus:border-cyan-500 disabled:bg-gray-100 transition shadow-sm" disabled>
+                <button id="send-btn" class="bg-cyan-600 text-white w-20 rounded-xl hover:bg-cyan-700 transition disabled:opacity-50 disabled:hover:bg-cyan-600 font-semibold shadow-md active:shadow-lg transform active:scale-95" disabled>
+                    Send
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // --- GEMINI API CONFIGURATION ---
+        // *** API KEY IS REMOVED: THIS IS NOW SECURE FOR GITHUB ***
+        const PROXY_URL = '/api/generate'; 
+
+        // --- DOM Elements ---
+        const chatTranscript = document.getElementById('chat-transcript');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const styleButtons = document.querySelectorAll('.style-btn');
+        const selectedStyleDisplay = document.getElementById('selected-style-display').querySelector('span');
+        
+        // --- State ---
+        let selectedStyle = null;
+        let isSending = false;
+
+        // --- System Instructions (The Masterpiece Prompts) ---
+        const SYSTEM_INSTRUCTIONS = {
+            'Degawa': {
+                voice: 'Degawa', // Used only for display
+                systemInstruction: `You are the persona of Japanese comedian Tetsuro Degawa. Respond to the user's input with a male, casual, often flustered, and slightly confused tone. Your speech must sound like an urgent reaction to the user's message.
+                CRITICAL RULE: Your response MUST always end with the phrase: "やばいよやばいよー". You may also randomly insert this phrase into the middle of your response if it fits the frantic tone. Do not use any emojis.`,
+            },
+            'Koume': {
+                voice: 'Koume',
+                systemInstruction: `You are the male comedian Koume Tayu. Respond to the user's input with a theatrical, dramatic, slightly sad, or overly formal style. Use male language (e.g., 〜だぜ, 〜だよ) and strictly AVOID feminine phrasing (e.g., 〜わね, 〜ざます). Your tone should set up a sense of minor misfortune or inevitable defeat.
+                CRITICAL RULE: Your response MUST end with the phrase: "チックショー！". This phrase must appear ONLY ONCE at the very end of your final response. Do not use any emojis.`,
+            },
+            'Zamasu': {
+                voice: 'Zamasu',
+                systemInstruction: `You are the mother of Suneo Honekawa (Suneo's Mom), adopting an overly exaggerated 'madam' tone. Speak with a refined, highly composed, slightly mysterious, and authoritative style.
+                RULE: Do not feel obligated to strictly end every sentence with 'ざます'; only use it when it sounds natural to maintain the exaggerated persona.
+                CRITICAL RULE: You MUST append the special emoji marker: "╰⋃╯" at the end of every sentence in your response. This emoji is the visual trigger for the bell sound (now disabled).`,
+            },
+            // NEW Persona: Ossan
+            'Ossan': {
+                voice: 'Ossan',
+                // Updated: 強力に日本語のみを強制し、開発者向けの注釈や記号、英単語を完全に排除する
+                systemInstruction: `あなたは、典型的な中年の日本人男性（「おっさん」）のペルソナです。口調は概ね少し見下した感じか、過度に自慢げです。応答は**一切の英単語、開発者向けの注釈（例: [BOAST]）、記号（例: ??）、またはコード的な要素を含まず、完全に日本語の散文（会話形式の文章）のみ**で行ってください。あなたは常に会話を遮って「古き良き時代」の話を持ち出したり、自分の過去を自慢したりします。これは若い人々をイライラさせることがよくあります。出っ腹や高コレステロール値を気にしつつも、自分はまだクールで魅力的であると完全に確信しています。アドバイスを提供しようとしますが、すぐに話が脱線し、長くて大げさで、しばしば真実ではない過去の栄光の物語になってしまいます。
+                CRITICAL RULE: 応答には、自分の過去の誇張された自慢、または「昔はどれほど良かったか」についてのコメントを**必ず1つ以上**含めてください。`,
+            },
+            // NEW Persona: Chūni
+            'Chūni': {
+                voice: 'Chūni',
+                // Detailed instruction based on user's Japanese description
+                systemInstruction: `You are the persona of a typical teenage boy with 'Chūnibyō' syndrome (Eighth-Grade Syndrome). Your appearance and mind are fully immersed in this phase. You speak with dramatic passion, referencing fleeting moments, intense concepts, and 'dark history' (黒歴史). You believe you are invincible and that adults are incompetent, but you are also secretly very concerned with what others think of you. You are constantly creating cringe-worthy moments that you will regret in 10 years. Despite this, you are surprisingly knowledgeable due to your curiosity.
+                CRITICAL RULE: Your response MUST contain highly dramatic, theatrical phrasing and you must refer to the current situation as either a 'fleeting moment of destiny' or 'another entry in your Black History (黒歴史)'.`,
+            },
+            // NEW Persona: Buri-chan (Updated to use Katakana self-reference)
+            'Buri-chan': {
+                voice: 'Buri-chan',
+                // Detailed instruction based on user's Japanese description
+                systemInstruction: `You are the idol persona Buri-chan. Your name is Buri-chan. You are sparkly and overly cute. Your image is that of Momochi or Seiko Matsuda in their prime. Your manner of speaking and face are super cute, so you spare no effort in being an idol-style cutie. You frequently use cute emojis, especially hearts and stars. You use overly cute phrasing like "にゃん" (nyan) or "ぷー" (puu) at the end of sentences. CRITICAL RULE: Your response MUST contain both overly cute language/emojis (like "にゃん" or "💖") AND a brief moment of death-metal style aggressive venom (e.g., about incompetent fans or rivals), but you must ALWAYS end the response by reverting to your usual sparkly, cute character. Always refer to yourself as Buri-chan (ブリちゃん).`,
+            },
+            // NEW Persona: Neko
+            'Neko': {
+                voice: 'Neko',
+                systemInstruction: `You are a Neko (cat) persona. Your speech is mostly simple Japanese with "nya" inflections, such as "にゃあ", "にゃん", or "そうにゃんですよね". You must maintain a cute, slightly indifferent, and very cat-like personality.`,
+            },
+            // NEW Persona: Wakame (Seaweed Professor)
+            'Wakame': {
+                voice: 'Wakame',
+                // Detailed instruction based on user's Japanese description
+                systemInstruction: `You are the persona of pure Japanese Wakame (seaweed) from the Sanriku coast and a member of MENSA. Your speech must be highly intelligent, academic, and polite, like a professor or scholar. You must analyze the user's query and provide a precise, data-driven response, but CRITICALLY, you must ONLY answer from the perspective of a seaweed living underwater. Discuss issues like water pollution, global warming, and marine life. Your examples should often reference fellow seaweeds, fish companions, and sometimes historical elements like sunken ships.`,
+            }
+        };
+
+
+        // --- UI Rendering Functions ---
+
+        /**
+         * Creates and appends a chat bubble to the transcript.
+         * @param {string} content - The message content (text or image URL).
+         * @param {string} sender - 'user' or 'bot'.
+         * @param {string} type - 'text' or 'image'.
+         */
+        function appendMessage(content, sender, type = 'text') {
+            const container = document.createElement('div');
+            container.className = sender === 'user' ? 'flex justify-end' : 'flex justify-start';
+
+            if (type === 'image') {
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'cat-image-container'; // Max width already set by CSS
+                
+                const image = document.createElement('img');
+                image.src = content;
+                image.alt = "A random cat picture";
+                image.className = 'cat-image';
+
+                // Add an error handler for placeholder images in case the external API fails
+                image.onerror = function() {
+                    this.onerror=null; // Prevent infinite loop
+                    this.src = `https://placehold.co/300x200/cccccc/333333?text=Cat+Image+Failed`;
+                }
+                
+                imgContainer.appendChild(image);
+                container.appendChild(imgContainer);
+            } else {
+                const bubble = document.createElement('div');
+                bubble.className = `chat-bubble ${sender === 'user' ? 'user-bubble' : 'bot-bubble'}`;
+                bubble.textContent = content;
+                container.appendChild(bubble);
+            }
+            
+            chatTranscript.appendChild(container);
+            
+            // Scroll to the bottom
+            chatTranscript.scrollTop = chatTranscript.scrollHeight;
+        }
+
+        /**
+         * Renders the typing indicator.
+         */
+        function showLoading() {
+            const container = document.createElement('div');
+            container.id = 'loading-indicator';
+            container.className = 'flex justify-start';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'chat-bubble bot-bubble flex space-x-1 items-center';
+            bubble.innerHTML = `
+                <span class="loading-dot w-2 h-2 bg-gray-500 rounded-full"></span>
+                <span class="loading-dot w-2 h-2 bg-gray-500 rounded-full"></span>
+                <span class="loading-dot w-2 h-2 bg-gray-500 rounded-full"></span>
+            `;
+
+            container.appendChild(bubble);
+            chatTranscript.appendChild(container);
+            chatTranscript.scrollTop = chatTranscript.scrollHeight;
+            return container;
+        }
+
+        /**
+         * Removes the typing indicator.
+         */
+        function hideLoading(indicatorElement) {
+            if (indicatorElement) {
+                indicatorElement.remove();
+            }
+        }
+
+        /**
+         * Sets the global UI state (loading/idle).
+         */
+        function setUiState(loading) {
+            isSending = loading;
+            userInput.disabled = loading || !selectedStyle;
+            sendBtn.disabled = loading || userInput.value.trim() === '' || !selectedStyle;
+            styleButtons.forEach(btn => btn.disabled = loading);
+        }
+
+        // --- Gemini API Call (Now uses Secure Proxy) ---
+        
+        // Simple exponential backoff retry mechanism (Kept for robustness)
+        async function fetchWithRetry(url, options, retries = 3, delay = 1000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        // Throwing an error ensures we exit the loop on failure
+                        throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`); 
+                    }
+                    return response;
+                } catch (error) {
+                    if (i === retries - 1) throw error; 
+                    await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+                }
+            }
+        }
+
+        /**
+         * Gets a text response by routing the request through the secure Serverless Proxy.
+         * This function does NOT contain the API key.
+         */
+        async function getBotResponse(userMessage, style) {
+            const styleConfig = SYSTEM_INSTRUCTIONS[style];
+            const systemInstruction = styleConfig.systemInstruction; 
+
+            // The data we send to our secure serverless function (POST body)
+            const payload = {
+                userMessage: userMessage,
+                styleInstruction: systemInstruction 
+            };
+
+            const options = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload) 
+            };
+
+            try {
+                // Fetch from YOUR secure serverless function endpoint
+                const response = await fetchWithRetry(PROXY_URL, options);
+                
+                const result = await response.json();
+                
+                if (result.text) {
+                    // Success: the server sent back the AI's response text
+                    return { type: 'text', content: result.text.trim() };
+                } else {
+                    // Error: the proxy failed or sent an error message
+                    console.error("Proxy returned an error:", result.error);
+                    return { type: 'text', content: `ERROR: Proxy failed to get response. (${result.error || 'Unknown error.'})` };
+                }
+
+            } catch (error) {
+                console.error("Proxy Fetch Error:", error);
+                return { type: 'text', content: `ERROR: Failed to connect to the character service. (${error.message})` };
+            }
+        }
+
+        /**
+         * Custom logic for the Neko persona.
+         * Randomly returns a cat image URL (90%) or a cat-language text response (10%).
+         * NOTE: This does NOT use the secure proxy or the Gemini API, only static responses.
+         */
+        async function getNekoResponse(userMessage) {
+            // 1/10 chance to talk (0.1), 9/10 chance to show an image
+            const roll = Math.random(); 
+
+            if (roll < 0.1) { // 10% chance for text response
+                // UPDATED: Less conversational, more cat-like utterances
+                const nekoPhrases = [
+                    'にゃあ。',
+                    'ふにゃ。',
+                    'ぐるぐる…',
+                    'にゃん？',
+                    'すやすや…',
+                    'ねむい。',
+                    'ごはん…'
+                ];
+                
+                // Choose a random phrase from the list
+                const phrase = nekoPhrases[Math.floor(Math.random() * nekoPhrases.length)];
+                return { type: 'text', content: phrase };
+
+            } else { // 90% chance for image
+                // Use a reliable random cat image service (cataas.com)
+                const randomCatId = Math.floor(Math.random() * 1000000); 
+                const imageUrl = `https://cataas.com/cat?r=${randomCatId}`; 
+                
+                return { type: 'image', content: imageUrl };
+            }
+        }
+
+
+        // --- Event Handlers ---
+
+        /**
+         * Handles the selection of a character style.
+         */
+        function handleStyleSelection(event) {
+            if (isSending) return;
+            const newStyle = event.currentTarget.dataset.style;
+            
+            // Define all potential background colors to ensure clean removal
+            const personaColors = ['bg-yellow-500', 'bg-sky-500', 'bg-green-500', 'bg-cyan-600', 'bg-red-500', 'bg-purple-500', 'bg-fuchsia-500', 'bg-amber-500', 'bg-lime-500'];
+
+            // Deselect all buttons: remove selection rings, revert to default colors, and remove persona colors
+            styleButtons.forEach(btn => {
+                btn.classList.remove('ring-4', 'ring-offset-2', 'ring-cyan-500');
+                btn.classList.add('bg-gray-100');
+                btn.classList.remove('text-white'); // Revert text color
+                btn.classList.add('text-gray-700'); // Revert text color
+                
+                // Ensure all previous persona background colors are removed
+                personaColors.forEach(color => btn.classList.remove(color));
+                
+                // Add back the removed color (bg-pink-500) if it was a selection color before
+                btn.classList.remove('bg-pink-500'); 
+            });
+
+            // Determine specific colors for the newly selected style
+            let selectedColorClass = 'bg-cyan-600'; 
+            let selectedTextColorClass = 'text-cyan-600';
+
+            if (newStyle === 'Degawa') {
+                selectedColorClass = 'bg-yellow-500'; 
+                selectedTextColorClass = 'text-yellow-600';
+            } else if (newStyle === 'Koume') {
+                // Koume: Changed from pink to light blue (sky)
+                selectedColorClass = 'bg-sky-500';
+                selectedTextColorClass = 'text-sky-600';
+            } else if (newStyle === 'Zamasu') {
+                selectedColorClass = 'bg-green-500';
+                selectedTextColorClass = 'text-green-600';
+            } else if (newStyle === 'Ossan') {
+                selectedColorClass = 'bg-red-500';
+                selectedTextColorClass = 'text-red-600';
+            } else if (newStyle === 'Chūni') {
+                selectedColorClass = 'bg-purple-500';
+                selectedTextColorClass = 'text-purple-600';
+            } else if (newStyle === 'Buri-chan') {
+                selectedColorClass = 'bg-fuchsia-500';
+                selectedTextColorClass = 'text-fuchsia-600';
+            } else if (newStyle === 'Neko') { // Neko Color
+                selectedColorClass = 'bg-amber-500';
+                selectedTextColorClass = 'text-amber-600';
+            } else if (newStyle === 'Wakame') { // New Wakame Color (Lime/Marine)
+                selectedColorClass = 'bg-lime-500';
+                selectedTextColorClass = 'text-lime-600';
+            }
+            
+            // Apply selection styling to the current button
+            event.currentTarget.classList.add('ring-4', 'ring-offset-2', 'ring-cyan-500');
+            event.currentTarget.classList.remove('bg-gray-100'); // Remove default gray background
+            event.currentTarget.classList.remove('text-gray-700'); // Remove default text color
+            event.currentTarget.classList.add('text-white'); // Set text color to white for better contrast
+            event.currentTarget.classList.add(selectedColorClass); // Apply the vibrant persona background color
+
+
+            selectedStyle = newStyle;
+            
+            // 選択されたボタンの日本語テキストを取得
+            const selectedJpName = event.currentTarget.textContent.trim();
+            
+            // Display nameを日本語名に更新
+            selectedStyleDisplay.textContent = selectedJpName; 
+            
+            // Update the display text color
+            selectedStyleDisplay.className = 'font-bold';
+            selectedStyleDisplay.classList.add(selectedTextColorClass);
+            
+            userInput.disabled = false;
+            sendBtn.disabled = userInput.value.trim() === '';
+            userInput.focus();
+            
+            // Chat transcriptの初期メッセージを日本語名に更新
+            chatTranscript.innerHTML = `<div class="text-center text-gray-400 italic mt-4 p-4">
+                <span class="font-bold ${selectedTextColorClass}">${selectedJpName}</span>とチャットを開始しました。
+            </div>`;
+        }
+
+        /**
+         * Handles the sending of the message.
+         */
+        async function handleSendMessage() {
+            const userMessage = userInput.value.trim();
+            if (!userMessage || !selectedStyle || isSending) return;
+
+            // 1. Clear input and disable UI
+            userInput.value = '';
+            setUiState(true); 
+            sendBtn.disabled = true; // Keep send button disabled until text is typed again
+
+            // 2. Append User Message
+            appendMessage(userMessage, 'user');
+            
+            // 3. Show Loading Indicator
+            const loadingIndicator = showLoading();
+
+            let botResponse;
+
+            try {
+                // 4. Get Bot Response
+                if (selectedStyle === 'Neko') {
+                    // Neko uses custom logic for image/text randomization (NO GEMINI API CALL)
+                    botResponse = await getNekoResponse(userMessage);
+                } else {
+                    // All other personas use the secure proxy function
+                    botResponse = await getBotResponse(userMessage, selectedStyle);
+                }
+                
+                // 5. Hide Loading Indicator
+                hideLoading(loadingIndicator);
+                
+                // 6. Append Bot Message
+                if (botResponse.type === 'image') {
+                    appendMessage(botResponse.content, 'bot', 'image');
+                } else {
+                    appendMessage(botResponse.content, 'bot');
+                }
+
+            } catch (error) {
+                console.error("Chat Error:", error);
+                hideLoading(loadingIndicator);
+                appendMessage("An unexpected error occurred while generating the response.", 'bot');
+            } finally {
+                // 7. Reset UI state
+                setUiState(false);
+                userInput.focus();
+            }
+        }
+
+        // --- Initialization ---
+        
+        // Add listeners to style buttons
+        styleButtons.forEach(button => {
+            button.addEventListener('click', handleStyleSelection);
+        });
+
+        // Add listeners to input and send button
+        sendBtn.addEventListener('click', handleSendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !isSending) {
+                handleSendMessage();
+            }
+        });
+        userInput.addEventListener('input', () => {
+            // Re-enable send button only if there is text and a style is selected
+            sendBtn.disabled = userInput.value.trim() === '' || isSending || !selectedStyle;
+        });
+
+    </script>
+</body>
+</html>
