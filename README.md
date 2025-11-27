@@ -9,7 +9,7 @@ This code is provided primarily as a demonstration of a secure, serverless appli
 
 ### 🔑 Key Features & Security Architecture
 
-* **Multi-Persona Engine:** Features 8 extremely unique, dynamic Japanese character styles (おっさん, 厨二, 猫, ワカメ, etc.) with unique personalities and response rules defined by system prompts. [クセ強注意！]
+* **Multi-Persona Engine:** Features 8 extremely unique, dynamic Japanese character styles (クセ強キャラ：おっさん, 厨二, 猫, ワカメ, etc.) with unique personalities and response rules defined by system prompts.
 * **Secure API Key Management (Crucial):** The application strictly uses a **Serverless Proxy Function** to protect the **Gemini API key**. The key is **never** exposed in the client-side code, ensuring credentials are safe.
 * **Google Search Grounding:** All AI conversations leverage the built-in Google Search tool for factual grounding and real-time information retrieval when needed.
 * **Technology Stack:** Pure **HTML**, **Vanilla JavaScript**, and **Tailwind CSS** (via CDN) for a lightweight, single-page experience.
