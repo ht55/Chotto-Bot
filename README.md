@@ -1,4 +1,4 @@
-## 🤖 Chotto Bot (Modern & Unique Persona Chatbot)
+## 🤖 Chotto Bot (Modern & Unique Japanese Persona Chatbot)
 **▶️ LIVE DEMO:** [Try the Chotto Bot here!](https://chotto-bot.vercel.app)
 
 This project is a dynamic, multi-persona chat application showcasing the **Gemini API** for advanced character generation, built using a simple, secure architecture.
