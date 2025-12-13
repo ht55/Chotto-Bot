@@ -1,2 +1,21 @@
 # .gitignore file content
 .env
+# ===== Node / Next.js =====
+node_modules/
+.next/
+out/
+.env*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===== Python =====
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# ===== OS / Editor =====
+.DS_Store
+.vscode/
+.idea/
