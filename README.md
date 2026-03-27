@@ -1,6 +1,12 @@
-## 🤖 Chotto Bot (Modern & Unique Persona Chatbot)
+## 🤖 Chotto Bot・ちょっとボット (Modern & Unique Persona Chatbot)
 
-This project is a dynamic, multi-persona chat application showcasing the **Gemini API** for advanced character generation, built using a simple, secure architecture.
+<p align="center">
+  <img src="chottobot1.png" width="270" alt="App Screenshot" />
+  <img src="chottobot2.png" width="270" alt="App Screenshot" />
+  <img src="chottobot3.png" width="270" alt="App Screenshot" />
+</p>
+
+This project is a dynamic, multi-persona chat application showcasing the **Gemini API** for advanced character generation, built using a simple, secure architecture. 
 
 ### ⚠️ Ownership and Copyright
 
