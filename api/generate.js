@@ -13,7 +13,7 @@ export default async function handler(request, response) {
         }
 
         // 2026年3月時点の最新メインラインモデルにアップデート
-        const MODEL_ID = "gemini-3.0-flash"; 
+        const MODEL_ID = "gemini-2.5-flash"; 
         const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_ID}:generateContent?key=${userApiKey}`;
 
         const geminiPayload = {
@@ -21,7 +21,6 @@ export default async function handler(request, response) {
             system_instruction: { parts: [{ text: styleInstruction || "" }] },
             generationConfig: {
                 temperature: 0.8,
-                maxOutputTokens: 4096 // 3.0の性能を活かすための拡張
             }
         };
 
