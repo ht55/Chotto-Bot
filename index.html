@@ -6,19 +6,168 @@
     <title>Chotto Bot - 2.5 Flash BYOK Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; }
-        .chat-bubble { max-width: 85%; padding: 12px 18px; border-radius: 1.25rem; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); }
-        .user-bubble { background-color: #96E0DB; color: #1f2937; border-bottom-right-radius: 0.5rem; }
-        .bot-bubble { background-color: #ffffff; color: #1f2937; border: 1px solid #e5e7eb; border-bottom-left-radius: 0.5rem; }
-        .cat-image-container { max-width: 85%; margin-bottom: 10px; border-radius: 1.25rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
-        .cat-image { display: block; width: 100%; height: auto; border-radius: 1.25rem; object-fit: cover; }
-        .loading-dot { animation: bounce 0.6s infinite alternate; }
-        .loading-dot:nth-child(2) { animation-delay: 0.2s; }
-        .loading-dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-5px); } }
-        #settings-modal { background-color: rgba(0, 0, 0, 0.5); display: none; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #d7dec9;
+            color: #1f2937;
+        }
+
+        #app {
+            background: #d3d3d3;
+            border-radius: 28px;
+            box-shadow:
+                10px 10px 20px rgba(0, 0, 0, 0.5),
+                -10px -10px 20px rgba(0, 0, 0, 0.5);
+            border: none;
+        }
+
+        header, footer {
+            background: transparent;
+            border: none;
+        }
+
+        h1 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #111;
+        }
+
+        /* ===== ボタン（ニューモーフィズム） ===== */
+        .style-btn {
+            background: #9aa47e;
+            border-radius: 999px;
+            box-shadow:
+                6px 6px 12px rgba(0, 0, 0, 0.268),
+                -6px -6px 12px rgba(255,255,255,0.8);
+            border: none;
+            color: #444;
+            transition: all 0.2s ease;
+        }
+
+        .style-btn:hover {
+            box-shadow:
+                inset 4px 4px 8px rgba(0,0,0,0.12),
+                inset -4px -4px 8px rgba(255,255,255,0.8);
+        }
+
+        .style-btn.ring-4 {
+            box-shadow:
+                inset 6px 6px 12px rgba(0,0,0,0.15),
+                inset -6px -6px 12px rgba(255,255,255,0.9);
+            color: #111;
+            font-weight: 600;
+        }
+
+        /* ===== チャット背景 ===== */
+        #chat-transcript {
+            background: transparent;
+        }
+
+        /* ===== バブル ===== */
+        .chat-bubble {
+            max-width: 80%;
+            padding: 14px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            background: #e9ecef;
+            box-shadow:
+                2px 2px 7px rgba(0,0,0,0.12),
+                -1px -1px 1px rgba(255, 255, 255, 0.618);
+        }
+
+        .user-bubble {
+            border-bottom-right-radius: 6px;
+            color: #707070;
+        }
+
+        .bot-bubble {
+            border-bottom-left-radius: 6px;
+            color: #00836d;
+        }
+
+        .chat-bubble:active {
+            box-shadow:
+                inset 4px 4px 10px rgba(0,0,0,0.15),
+                inset -4px -4px 10px rgba(255,255,255,0.9);
+        }
+
+        /* ===== input ===== */
+        input {
+            background: #e9ecef !important;
+            border-radius: 16px !important;
+            border: none !important;
+            box-shadow:
+                inset 6px 6px 12px rgba(0,0,0,0.12),
+                inset -6px -6px 12px rgba(255,255,255,0.8);
+            padding: 12px;
+        }
+
+        input:focus {
+            outline: none;
+        }
+
+        /* ===== Send button ===== */
+        #send-btn {
+            background: #01584a;
+            border-radius: 16px;
+            box-shadow:
+                6px 6px 14px rgba(0,0,0,0.15),
+                -6px -6px 14px rgba(255,255,255,0.8);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        #send-btn:active {
+            box-shadow:
+                inset 4px 4px 10px rgba(0,0,0,0.15),
+                inset -4px -4px 10px rgba(255,255,255,0.9);
+        }
+
+        /* ===== Cat images ===== */
+        .cat-image-container {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow:
+                8px 8px 20px rgba(0,0,0,0.15),
+                -8px -8px 20px rgba(255,255,255,0.8);
+        }
+
+        /* ===== モーダル ===== */
+        #settings-modal {
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(6px);
+        }
+
+        #settings-modal > div {
+            background: #e9ecef;
+            border-radius: 24px;
+            box-shadow:
+                12px 12px 30px rgba(0,0,0,0.2),
+                -12px -12px 30px rgba(255,255,255,0.9);
+            border: none;
+        }
+
+        /* ===== ローディング ===== */
+        .loading-dot {
+            background: #666;
+        }
+
+        /* ===== スクロール ===== */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
     </style>
+
+
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
@@ -32,18 +181,18 @@
                 </svg>
             </button>
 
-            <h1 class="text-3xl font-bold text-gray-800">Chotto Bot</h1>
+            <h1 class="text-3xl font-bold text-gray-800">ちょっとボット</h1>
             <p class="text-sm text-gray-500 mb-4">Choose a character and start chatting.</p>
             
             <div id="style-selector" class="flex flex-wrap justify-center gap-2">
-                <button data-style="Degawa" title="出川っぽい。口癖の「やばいよやばいよー」をランダムに放り込んでくるのが特徴。" class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-yellow-400 transition transform hover:scale-105 active:scale-95">出川</button>
-                <button data-style="Koume" title="某大夫的なチックショーが決めゼリフ。紳士的にってプログラムしたはずなんだけど、若干方向がズレている感が拭えない。" class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-sky-400 transition transform hover:scale-105 active:scale-95">小梅</button>
-                <button data-style="Zamasu" title="スネちゃまのママ的なマダム。優雅に解決にならない解決策を提案してくれる。〇〇〇の絵文字付き⭐️" class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-400 transition transform hover:scale-105 active:scale-95">ざます</button>
-                <button data-style="Ossan" title="おっさん。上がる年齢に反比例して短くなる体感時間に事あるごとに驚く。常に昔話(誇張と嘘含む)に持っていく会話泥棒。コレステロール値高め。" class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-red-400 transition transform hover:scale-105 active:scale-95">おっさん</button>
-                <button data-style="Chūni" title="厨二・中二。見た目も頭も中二真っ只中。激情と刹那と黒歴史でできている。親兄弟は至ってまとも。若さに任せて突っ走るが意外に博識。" class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-purple-400 transition transform hover:scale-105 active:scale-95">中二</button>
-                <button data-style="Buri-chan" title="アイドル。キラキラのキュルンキュルンだが、時々めっちゃ毒吐く。自分が世界一可愛いと信じて疑わない。なおブリトニー・スピアーズではない。" class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-fuchsia-400 transition transform hover:scale-105 active:scale-95">ブリちゃん</button>
-                <button data-style="Neko" title="ねこ。かわいい姿を365日24時間見せつけてくる。ランダムに10回に1回の割合で返事してくれる。" class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-amber-400 transition transform hover:scale-105 active:scale-95">猫</button>
-                <button data-style="Wakame" title="三陸沖の純日本産ワカメ。MENSA会員。主に海中からのワカメ視点で、鋭く時事関連にも切り込む。" class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-lime-400 transition transform hover:scale-105 active:scale-95">ワカメ</button>
+                <button data-style="Degawa" title="出川っぽい。口癖の「やばいよやばいよー」をランダムに放り込んでくるのが特徴。" class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-yellow-200 transition transform hover:scale-105 active:scale-95">出川</button>
+                <button data-style="Koume" title="某大夫的なチックショーが決めゼリフ。紳士的にってプログラムしたはずなんだけど、若干方向がズレている感が拭えない。" class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-sky-200 transition transform hover:scale-105 active:scale-95">小梅</button>
+                <button data-style="Zamasu" title="スネちゃまのママ的なマダム。優雅に解決にならない解決策を提案してくれる。〇〇〇の絵文字付き⭐️" class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-red-200 transition transform hover:scale-105 active:scale-95">ざます</button>
+                <button data-style="Ossan" title="おっさん。上がる年齢に反比例して短くなる体感時間に事あるごとに驚く。常に昔話(誇張と嘘含む)に持っていく会話泥棒。コレステロール値高め。" class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-200 transition transform hover:scale-105 active:scale-95">おっさん</button>
+                <button data-style="Chūni" title="厨二・中二。見た目も頭も中二真っ只中。激情と刹那と黒歴史でできている。親兄弟は至ってまとも。若さに任せて突っ走るが意外に博識。" class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-purple-200 transition transform hover:scale-105 active:scale-95">厨二</button>
+                <button data-style="Buri-chan" title="アイドル。キラキラのキュルンキュルンだが、時々めっちゃ毒吐く。自分が世界一可愛いと信じて疑わない。なおブリトニー・スピアーズではない。" class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-fuchsia-200 transition transform hover:scale-105 active:scale-95">ブリちゃん</button>
+                <button data-style="Neko" title="ねこ。かわいい姿を365日24時間見せつけてくる。ランダムに10回に1回の割合で返事してくれる。" class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-amber-400 transition transform hover:scale-105 active:scale-95">ねこ</button>
+                <button data-style="Wakame" title="三陸沖の純日本産ワカメ。MENSA会員。主に海中からのワカメ視点で、鋭く時事関連にも切り込む。" class="style-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold hover:bg-lime-300 transition transform hover:scale-105 active:scale-95">ワカメ</button>
             </div>
             <p id="selected-style-display" class="mt-3 text-center text-sm font-medium text-gray-600">Selected Style: <span class="font-bold text-gray-500">None</span></p>
         </header>
@@ -114,9 +263,9 @@
         };
 
         const COLOR_MAP = {
-            'Degawa': 'bg-yellow-500', 'Koume': 'bg-sky-500', 'Zamasu': 'bg-green-500',
-            'Ossan': 'bg-red-500', 'Chūni': 'bg-purple-500', 'Buri-chan': 'bg-fuchsia-500',
-            'Neko': 'bg-amber-500', 'Wakame': 'bg-lime-500'
+            'Degawa': 'bg-yellow-200', 'Koume': 'bg-sky-200', 'Zamasu': 'bg-red-200',
+            'Ossan': 'bg-green-200', 'Chūni': 'bg-purple-200', 'Buri-chan': 'bg-fuchsia-200',
+            'Neko': 'bg-orange-300', 'Wakame': 'bg-lime-200'
         };
 
         // --- Logic & UI ---
